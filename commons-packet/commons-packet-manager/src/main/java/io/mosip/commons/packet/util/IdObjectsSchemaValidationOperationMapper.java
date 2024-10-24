@@ -13,6 +13,9 @@ public class IdObjectsSchemaValidationOperationMapper {
 
 		/** The update uin. */
 		UPDATE("UPDATE"),
+		
+		/** The renewal uin. */
+		RENEWAL("RENEWAL"),
 
 		/** The lost uin. */
 		LOST("LOST"),
@@ -57,6 +60,8 @@ public class IdObjectsSchemaValidationOperationMapper {
 		NEW_REGISTRATION("new-registration"),
 
 		CHILD_REGISTRATION("child-registration"),
+		
+		RENEWAL("renewal"),
 
 		OTHER("other"),
 
@@ -104,6 +109,11 @@ public class IdObjectsSchemaValidationOperationMapper {
 			LOGGER.debug(PacketManagerLogger.SESSIONID.toString(), PacketManagerLogger.REGISTRATIONID.toString(), "",
 					"IdObjectsSchemaValidationOperationMapper::getOperation()::exit-UPDATE");
 			return IdObjectValidatorSupportedOperations.OTHER.getOperation();
+		}
+		else if(process.equalsIgnoreCase(SyncTypeDto.RENEWAL.getValue())) {
+			LOGGER.debug(PacketManagerLogger.SESSIONID.toString(), PacketManagerLogger.REGISTRATIONID.toString(), "",
+					"IdObjectsSchemaValidationOperationMapper::getOperation()::exit-RENEWAL");
+			return IdObjectValidatorSupportedOperations.RENEWAL.getOperation();
 		}
 		else if(process.equalsIgnoreCase(SyncTypeDto.RES_UPDATE.getValue())) {
 			LOGGER.debug(PacketManagerLogger.SESSIONID.toString(), PacketManagerLogger.REGISTRATIONID.toString(), "",
