@@ -21,6 +21,7 @@ on:
       - 'master'
       - '1.*'
       - tf_nira_dev
+      - tf_nira_dev*
 
 jobs:
   build-maven-packet-manager:
