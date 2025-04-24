@@ -29,9 +29,9 @@
         <maven-shade-plugin.version>2.3</maven-shade-plugin.version>
 
         <!-- spring -->
-        <spring.boot.version>2.0.2.RELEASE</spring.boot.version>
-        <spring.data.jpa.version>2.0.7.RELEASE</spring.data.jpa.version>
-        <spring-cloud-config.version>2.0.0.RELEASE</spring-cloud-config.version>
+        <spring.boot.version>2.7.18</spring.boot.version>
+        <spring.data.jpa.version>2.7.18</spring.data.jpa.version>
+        <spring-cloud-config.version>2.7.18</spring-cloud-config.version>
         <h2.version>1.4.197</h2.version>
         <jackson.datatype.version>2.9.8</jackson.datatype.version>
         <kernel.keygenerator.bouncycastle.version>1.2.0.1</kernel.keygenerator.bouncycastle.version>
@@ -44,7 +44,7 @@
         <kernel.auth.adaptor.version>1.2.0.1</kernel.auth.adaptor.version>
         <kernel-dataaccess-hibernate.version>1.2.0.1</kernel-dataaccess-hibernate.version>
         <kernel.logger.logback.version>1.2.0.1</kernel.logger.logback.version>
-        <spring.boot.co>2.0.2.RELEASE</spring.boot.co>
+        <spring.boot.co>2.7.18</spring.boot.co>
         <khazana.version>1.2.0.1</khazana.version>
         <sonar.coverage.exclusions>**/constant/**,**/config/**,**/httpfilter/**,**/cache/**,**/dto/**,**/entity/**,**/model/**,**/exception/**,**/repository/**,**/security/**,**/*Config.java,**/*BootApplication.java,**/*VertxApplication.java,**/cbeffutil/**,**/*Utils.java,**/*Validator.java,**/*Helper.java,**/verticle/**,**/VidWriter.java/**,**/masterdata/utils/**,**/spi/**,**/core/http/**,"**/LocationServiceImpl.java","**/RegistrationCenterMachineServiceImpl.java","**/RegistrationCenterServiceImpl.java","**/pridgenerator/**","**/idgenerator/prid","**/proxy/**","**/cryptosignature/**"</sonar.coverage.exclusions>
         <sonar.cpd.exclusions>**/dto/**,**/entity/**,**/config/**</sonar.cpd.exclusions>
