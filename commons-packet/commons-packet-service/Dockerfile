@@ -110,6 +110,7 @@ CMD if [ "$is_glowroot_env" = "present" ]; then \
     wget -q --show-progress "${iam_adapter_url_env}" -O "${loader_path_env}"/kernel-auth-adapter.jar; \
     wget -q --show-progress "${cache_provider_url_env}" -O "${loader_path_env}"/cache-provider.jar; \
     wget -q --show-progress "${cache_config_url_env}" -O "${loader_path_env}"/hazelcast.xml; \
+    wget -q --show-progress "${redis_jks_cert_url_env}" -O "${loader_path_env}"/proxy-certificate.jks; \
     java -Dloader.path="${loader_path_env}"  -jar -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" commons-packet-service.jar; \
     fi
 
