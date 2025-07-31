@@ -115,14 +115,16 @@ public class PacketKeeper {
      * @return
      */
     public boolean checkSignature(Packet packet, byte[] encryptedSubPacket) throws NoSuchAlgorithmException {
+    	long start = System.currentTimeMillis();
         boolean result = disablePacketSignatureVerification ? true :
         		getCryptoService().verify(helper.getRefId(
                         packet.getPacketInfo().getId(), packet.getPacketInfo().getRefId()), packet.getPacket()
         				, CryptoUtil.decodeURLSafeBase64(packet.getPacketInfo().getSignature()));
         if (result)
             result = checkIntegrity(packet.getPacketInfo(), encryptedSubPacket);
+        long end = System.currentTimeMillis();
         LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID,
-                getName(packet.getPacketInfo().getId(), packet.getPacketInfo().getPacketName()), "Integrity and signature check : " + result);
+                getName(packet.getPacketInfo().getId(), packet.getPacketInfo().getPacketName()), "Integrity and signature check : " + result + " in " + (end - start) + " ms");
         return result;
     }
 
@@ -134,8 +136,14 @@ public class PacketKeeper {
      */
     public Packet getPacket(PacketInfo packetInfo) throws PacketKeeperException {
         try {
+        	LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, packetInfo.getId(), packetInfo.getPacketName(),
+    				"Getting packet");
+        	long start = System.currentTimeMillis();
             InputStream is = getAdapter().getObject(PACKET_MANAGER_ACCOUNT, packetInfo.getId(), packetInfo.getSource(),
                     packetInfo.getProcess(), getName(packetInfo.getId(), packetInfo.getPacketName()));
+            long end = System.currentTimeMillis();
+            LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, packetInfo.getId(), packetInfo.getPacketName(),
+    				"Packet fetched in " + (end - start) + " ms");
             if (is == null) {
                 LOGGER.error(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID,
                         getName(packetInfo.getId(), packetInfo.getPacketName()), packetInfo.getProcess() + " Packet is not present in packet store.");
@@ -144,8 +152,14 @@ public class PacketKeeper {
             byte[] encryptedSubPacket = IOUtils.toByteArray(is);
 
             Packet packet = new Packet();
+            LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, packetInfo.getId(), packetInfo.getPacketName(),
+    				"Getting meta data for packet");
+            start = System.currentTimeMillis();
             Map<String, Object> metaInfo = getAdapter().getMetaData(PACKET_MANAGER_ACCOUNT, packetInfo.getId(),
                     packetInfo.getSource(), packetInfo.getProcess(), getName(packetInfo.getId(), packetInfo.getPacketName()));
+            end = System.currentTimeMillis();
+            LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, packetInfo.getId(), packetInfo.getPacketName(),
+    				"Meta data fetched for packet in " + (end - start) + " ms");
             if (metaInfo != null && !metaInfo.isEmpty())
                 packet.setPacketInfo(PacketManagerHelper.getPacketInfo(metaInfo));
             else {
@@ -153,8 +167,14 @@ public class PacketKeeper {
                         getName(packetInfo.getId(), packetInfo.getPacketName()), "metainfo not found for this packet");
                 packet.setPacketInfo(packetInfo);
             }
+            LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, packetInfo.getId(), packetInfo.getPacketName(),
+    				"Decrypting packet");
+            start = System.currentTimeMillis();
             byte[] subPacket = getCryptoService().decrypt(helper.getRefId(
                     packet.getPacketInfo().getId(), packet.getPacketInfo().getRefId()), encryptedSubPacket);
+            end = System.currentTimeMillis();
+            LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, packetInfo.getId(), packetInfo.getPacketName(),
+    				"Packet decrypted in " + (end - start) + " ms");
             packet.setPacket(subPacket);
 
 
@@ -270,12 +290,24 @@ public class PacketKeeper {
 	}
 
 	public Map<String, String> getTags(String id) {
+		LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id,
+				"Getting tags");
+    	long start = System.currentTimeMillis();
 			Map<String, String> existingTags = getAdapter().getTags(PACKET_MANAGER_ACCOUNT, id);
+		long end = System.currentTimeMillis();
+        LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id,
+    		"Tags fetched in " + (end - start) + " ms");
          return existingTags;
 	}
 
     public List<ObjectDto> getAll(String id) {
+    	LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id,
+				"Getting info");
+    	long start = System.currentTimeMillis();
         List<ObjectDto> allObjects = getAdapter().getAllObjects(PACKET_MANAGER_ACCOUNT, id);
+        long end = System.currentTimeMillis();
+        LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id,
+    		"Info fetched in " + (end - start) + " ms");
         return allObjects;
     }
 

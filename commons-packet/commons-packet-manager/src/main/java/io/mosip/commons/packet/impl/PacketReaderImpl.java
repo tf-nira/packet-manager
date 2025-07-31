@@ -133,8 +133,17 @@ public class PacketReaderImpl implements IPacketReader {
 		try {
 			for (String srcPacket : sourcePacketNames) {
 				Packet packet = packetKeeper.getPacket(getPacketInfo(id, srcPacket, source, process));
+				LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id, srcPacket,
+	    				"Unzipping packet");
+	        	long start = System.currentTimeMillis();
 				InputStream idJsonStream = ZipUtils.unzipAndGetFile(packet.getPacket(), "ID");
+				long end = System.currentTimeMillis();
+	            LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id, srcPacket,
+	    				"Packet unzipped in " + (end - start) + " ms");
 				if (idJsonStream != null) {
+					LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id, srcPacket,
+		    				"Constructing fields map");
+		        	start = System.currentTimeMillis();
 					byte[] bytearray = IOUtils.toByteArray(idJsonStream);
 					String jsonString = new String(bytearray);
 					LinkedHashMap<String, Object> currentIdMap = (LinkedHashMap<String, Object>) mapper
@@ -156,6 +165,9 @@ public class PacketReaderImpl implements IPacketReader {
 							}
 						}
 					});
+					end = System.currentTimeMillis();
+		            LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id, srcPacket,
+		    				"Fields map constructed in " + (end - start) + " ms");
 				}
 			}
 		} catch (Exception e) {
@@ -209,9 +221,22 @@ public class PacketReaderImpl implements IPacketReader {
 			if (documentString != null && schemaVersion != null) {
 				JSONObject documentMap = new JSONObject(documentString);
 				String packetName = idSchemaUtils.getSource(documentName, schemaVersion);
+				LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id,
+	    				"Getting packet for document");
+	        	long start = System.currentTimeMillis();
 				Packet packet = packetKeeper.getPacket(getPacketInfo(id, packetName, source, process));
+				long end = System.currentTimeMillis();
+	            LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id, 
+	    				"Packet fetched for document in " + (end - start) + " ms");
+	            
 				String value = documentMap.has(VALUE) ? documentMap.get(VALUE).toString() : null;
+				LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id,
+	    				"Unzipping packet for document");
+	        	start = System.currentTimeMillis();
 				InputStream documentStream = ZipUtils.unzipAndGetFile(packet.getPacket(), value);
+				end = System.currentTimeMillis();
+	            LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id,
+	    				"Packet for document unzipped in " + (end - start) + " ms");
 				if (documentStream != null) {
 					Document document = new Document();
 					document.setDocument(IOUtils.toByteArray(documentStream));
@@ -270,8 +295,20 @@ public class PacketReaderImpl implements IPacketReader {
 			if (packetName == null || fileName == null)
 				return null;
 
+			LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id,
+    				"Getting packet for biometrics");
+        	long start = System.currentTimeMillis();
 			Packet packet = packetKeeper.getPacket(getPacketInfo(id, packetName, source, process));
+			long end = System.currentTimeMillis();
+            LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id, 
+    				"Packet fetched for biometrics in " + (end - start) + " ms");
+            LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id,
+    				"Unzipping packet for biometrics");
+        	start = System.currentTimeMillis();
 			InputStream biometrics = ZipUtils.unzipAndGetFile(packet.getPacket(), fileName);
+			end = System.currentTimeMillis();
+            LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id,
+    				"Packet for biometrics unzipped in " + (end - start) + " ms");
 			if (biometrics == null)
 				return null;
 			BIR bir = CbeffValidator.getBIRFromXML(IOUtils.toByteArray(biometrics));
@@ -308,8 +345,17 @@ public class PacketReaderImpl implements IPacketReader {
 		try {
 			for (String packetName : sourcePacketNames) {
 				Packet packet = packetKeeper.getPacket(getPacketInfo(id, packetName, source, process));
+				LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id, packetName,
+	    				"Unzipping packet for meta info");
+	        	long start = System.currentTimeMillis();
 				InputStream idJsonStream = ZipUtils.unzipAndGetFile(packet.getPacket(), "PACKET_META_INFO");
+				long end = System.currentTimeMillis();
+	            LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id, packetName,
+	    				"Packet unzipped for meta info in " + (end - start) + " ms");
 				if (idJsonStream != null) {
+					LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id, packetName,
+		    				"Constructing fields map for meta info");
+		        	start = System.currentTimeMillis();
 					byte[] bytearray = IOUtils.toByteArray(idJsonStream);
 					String jsonString = new String(bytearray);
 					LinkedHashMap<String, Object> currentIdMap = (LinkedHashMap<String, Object>) mapper
@@ -325,6 +371,9 @@ public class PacketReaderImpl implements IPacketReader {
 							throw new GetAllMetaInfoException(e.getMessage());
 						}
 					});
+					end = System.currentTimeMillis();
+		            LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id, packetName,
+		    				"Fields map constructed for meta info in " + (end - start) + " ms");
 				}
 			}
 		} catch (Exception e) {
