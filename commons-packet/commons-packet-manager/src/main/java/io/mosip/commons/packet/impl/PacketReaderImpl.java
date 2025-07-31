@@ -133,15 +133,15 @@ public class PacketReaderImpl implements IPacketReader {
 		try {
 			for (String srcPacket : sourcePacketNames) {
 				Packet packet = packetKeeper.getPacket(getPacketInfo(id, srcPacket, source, process));
-				LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id, srcPacket,
+				LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id,
 	    				"Unzipping packet");
 	        	long start = System.currentTimeMillis();
 				InputStream idJsonStream = ZipUtils.unzipAndGetFile(packet.getPacket(), "ID");
 				long end = System.currentTimeMillis();
-	            LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id, srcPacket,
+	            LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id,
 	    				"Packet unzipped in " + (end - start) + " ms");
 				if (idJsonStream != null) {
-					LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id, srcPacket,
+					LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id,
 		    				"Constructing fields map");
 		        	start = System.currentTimeMillis();
 					byte[] bytearray = IOUtils.toByteArray(idJsonStream);
@@ -166,7 +166,7 @@ public class PacketReaderImpl implements IPacketReader {
 						}
 					});
 					end = System.currentTimeMillis();
-		            LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id, srcPacket,
+		            LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id,
 		    				"Fields map constructed in " + (end - start) + " ms");
 				}
 			}
@@ -345,15 +345,15 @@ public class PacketReaderImpl implements IPacketReader {
 		try {
 			for (String packetName : sourcePacketNames) {
 				Packet packet = packetKeeper.getPacket(getPacketInfo(id, packetName, source, process));
-				LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id, packetName,
+				LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id,
 	    				"Unzipping packet for meta info");
 	        	long start = System.currentTimeMillis();
 				InputStream idJsonStream = ZipUtils.unzipAndGetFile(packet.getPacket(), "PACKET_META_INFO");
 				long end = System.currentTimeMillis();
-	            LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id, packetName,
+	            LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id,
 	    				"Packet unzipped for meta info in " + (end - start) + " ms");
 				if (idJsonStream != null) {
-					LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id, packetName,
+					LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id,
 		    				"Constructing fields map for meta info");
 		        	start = System.currentTimeMillis();
 					byte[] bytearray = IOUtils.toByteArray(idJsonStream);
@@ -372,7 +372,7 @@ public class PacketReaderImpl implements IPacketReader {
 						}
 					});
 					end = System.currentTimeMillis();
-		            LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id, packetName,
+		            LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id,
 		    				"Fields map constructed for meta info in " + (end - start) + " ms");
 				}
 			}
