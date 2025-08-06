@@ -137,13 +137,13 @@ public class PacketKeeper {
     public Packet getPacket(PacketInfo packetInfo) throws PacketKeeperException {
         try {
         	LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, packetInfo.getId(),
-    				"Getting packet");
+    				"getPacket() :: Getting object from minio");
         	long start = System.currentTimeMillis();
             InputStream is = getAdapter().getObject(PACKET_MANAGER_ACCOUNT, packetInfo.getId(), packetInfo.getSource(),
                     packetInfo.getProcess(), getName(packetInfo.getId(), packetInfo.getPacketName()));
             long end = System.currentTimeMillis();
             LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, packetInfo.getId(),
-    				"Packet fetched in " + (end - start) + " ms");
+    				"getPacket() :: Object fetched from minio in " + (end - start) + " ms");
             if (is == null) {
                 LOGGER.error(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID,
                         getName(packetInfo.getId(), packetInfo.getPacketName()), packetInfo.getProcess() + " Packet is not present in packet store.");
@@ -153,13 +153,13 @@ public class PacketKeeper {
 
             Packet packet = new Packet();
             LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, packetInfo.getId(),
-    				"Getting meta data for packet");
+    				"getMetaData() :: Getting object from minio");
             start = System.currentTimeMillis();
             Map<String, Object> metaInfo = getAdapter().getMetaData(PACKET_MANAGER_ACCOUNT, packetInfo.getId(),
                     packetInfo.getSource(), packetInfo.getProcess(), getName(packetInfo.getId(), packetInfo.getPacketName()));
             end = System.currentTimeMillis();
             LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, packetInfo.getId(),
-    				"Meta data fetched for packet in " + (end - start) + " ms");
+    				"getMetaData() :: Object fetched from minio in " + (end - start) + " ms");
             if (metaInfo != null && !metaInfo.isEmpty())
                 packet.setPacketInfo(PacketManagerHelper.getPacketInfo(metaInfo));
             else {
@@ -291,23 +291,23 @@ public class PacketKeeper {
 
 	public Map<String, String> getTags(String id) {
 		LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id,
-				"Getting tags");
+				"getTags() :: Getting object from minio");
     	long start = System.currentTimeMillis();
 			Map<String, String> existingTags = getAdapter().getTags(PACKET_MANAGER_ACCOUNT, id);
 		long end = System.currentTimeMillis();
         LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id,
-    		"Tags fetched in " + (end - start) + " ms");
+    		"getTags() :: Object fetched from minio in " + (end - start) + " ms");
          return existingTags;
 	}
 
     public List<ObjectDto> getAll(String id) {
     	LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id,
-				"Getting info");
+				"getInfo() :: Getting object from minio");
     	long start = System.currentTimeMillis();
         List<ObjectDto> allObjects = getAdapter().getAllObjects(PACKET_MANAGER_ACCOUNT, id);
         long end = System.currentTimeMillis();
         LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID, id,
-    		"Info fetched in " + (end - start) + " ms");
+    		"getInfo() :: Object fetched from minio in " + (end - start) + " ms");
         return allObjects;
     }
 
