@@ -19,6 +19,8 @@ import io.mosip.commons.packet.dto.Document;
 import io.mosip.commons.packet.dto.TagRequestDto;
 import io.mosip.commons.packet.dto.TagResponseDto;
 import io.mosip.commons.packet.facade.PacketReader;
+import io.mosip.commons.packet.keeper.PacketKeeper;
+import io.mosip.commons.packet.util.PacketManagerLogger;
 import io.mosip.commons.packetmanager.dto.BiometricRequestDto;
 import io.mosip.commons.packetmanager.dto.DocumentDto;
 import io.mosip.commons.packetmanager.dto.FieldDto;
@@ -33,6 +35,7 @@ import io.mosip.kernel.biometrics.entities.BiometricRecord;
 import io.mosip.kernel.core.http.RequestWrapper;
 import io.mosip.kernel.core.http.ResponseFilter;
 import io.mosip.kernel.core.http.ResponseWrapper;
+import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.DateUtils;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,6 +52,8 @@ public class PacketReaderController {
 
     @Autowired
     private PacketReader packetReader;
+    
+    private static Logger LOGGER = PacketManagerLogger.getLogger(PacketReaderController.class);
 
     @Autowired
     private PacketReaderService packetReaderService;
@@ -62,6 +67,9 @@ public class PacketReaderController {
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
         public ResponseWrapper<FieldResponseDto> searchField(@RequestBody(required = true) RequestWrapper<FieldDto> fieldDto) {
+    	long starTime=System.currentTimeMillis();
+    	LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID,
+                 "CUSTOM-LOG  Starting Api /searchField for RID : ",fieldDto.getRequest().getId());
         SourceProcessDto sourceProcessDto = packetReaderService.getSourceAndProcess(fieldDto.getRequest().getId(),
                 fieldDto.getRequest().getField(), fieldDto.getRequest().getSource(), fieldDto.getRequest().getProcess());
         String resultField = sourceProcessDto == null ? null :
@@ -73,6 +81,8 @@ public class PacketReaderController {
         FieldResponseDto fieldResponseDto = new FieldResponseDto(responseMap);
 
         response.setResponse(fieldResponseDto);
+        LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID,
+                "CUSTOM-LOG  Ending  Api /searchField for RID : ",fieldDto.getRequest().getId()+" TimeTaken : "+(System.currentTimeMillis()-starTime)+" ms");
         return response;
     }
 
@@ -86,6 +96,9 @@ public class PacketReaderController {
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
     public ResponseWrapper<FieldResponseDto> searchFields(@RequestBody(required = true) RequestWrapper<FieldDtos> request) {
+    	long starTime=System.currentTimeMillis();
+    	LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID,
+                "CUSTOM-LOG  Starting Api /searchFields for RID : ",request.getRequest().getId());
         FieldDtos fieldDtos = request.getRequest();
         Map<String, String> resultFields = new HashMap<>();
         if ((fieldDtos.getSource()) == null) {
@@ -102,6 +115,8 @@ public class PacketReaderController {
         FieldResponseDto resultField = new FieldResponseDto(resultFields);
         ResponseWrapper<FieldResponseDto> response = new ResponseWrapper<FieldResponseDto>();
         response.setResponse(resultField);
+        LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID,
+                "CUSTOM-LOG  Ending  Api /searchFields for RID : ",request.getRequest().getId()+" TimeTaken : "+(System.currentTimeMillis()-starTime)+" ms");
         return response;
     }
 
@@ -115,6 +130,9 @@ public class PacketReaderController {
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
     public ResponseWrapper<Document> getDocument(@RequestBody(required = true) RequestWrapper<DocumentDto> request) {
+    	long starTime=System.currentTimeMillis();
+    	LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID,
+                "CUSTOM-LOG  Starting Api /document for RID : ",request.getRequest().getId());
         DocumentDto documentDto = request.getRequest();
         SourceProcessDto sourceProcessDto = packetReaderService.getSourceAndProcess(documentDto.getId(),
                 documentDto.getDocumentName(), documentDto.getSource(), documentDto.getProcess());
@@ -123,6 +141,8 @@ public class PacketReaderController {
                 sourceProcessDto.getSource(), sourceProcessDto.getProcess());
         ResponseWrapper<Document> response = new ResponseWrapper<Document>();
         response.setResponse(document);
+        LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID,
+                "CUSTOM-LOG  Ending  Api /document for RID : ",request.getRequest().getId()+" TimeTaken : "+(System.currentTimeMillis()-starTime)+" ms");
         return response;
     }
 
@@ -136,6 +156,9 @@ public class PacketReaderController {
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
     public ResponseWrapper<BiometricRecord> getBiometrics(@RequestBody(required = true) RequestWrapper<BiometricRequestDto> request) {
+    	long starTime=System.currentTimeMillis();
+    	LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID,
+                "CUSTOM-LOG  Starting Api /biometrics for RID : ",request.getRequest().getId());
         BiometricRequestDto bioRequest = request.getRequest();
         SourceProcessDto sourceProcessDto = packetReaderService.getSourceAndProcess(bioRequest.getId(),
                 bioRequest.getPerson(), bioRequest.getSource(), bioRequest.getProcess());
@@ -145,6 +168,8 @@ public class PacketReaderController {
                 sourceProcessDto.getSource(), sourceProcessDto.getProcess(), bioRequest.isBypassCache());
         ResponseWrapper<BiometricRecord> response = getResponseWrapper();
         response.setResponse(responseDto);
+        LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID,
+                "CUSTOM-LOG  Ending  Api /biometrics for RID : ",request.getRequest().getId()+" TimeTaken : "+(System.currentTimeMillis()-starTime)+" ms");
         return response;
     }
 
@@ -158,6 +183,9 @@ public class PacketReaderController {
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
     public ResponseWrapper<FieldResponseDto> getMetaInfo(@RequestBody(required = true) RequestWrapper<InfoDto> request) {
+    	long starTime=System.currentTimeMillis();
+    	LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID,
+                "CUSTOM-LOG  Starting Api /metaInfo for RID : ",request.getRequest().getId());
         InfoDto metaDto = request.getRequest();
         SourceProcessDto sourceProcessDto = packetReaderService.getSourceAndProcess(metaDto.getId(), metaDto.getSource(), metaDto.getProcess());
         Map<String, String> resultFields = packetReader.getMetaInfo(metaDto.getId(),
@@ -165,6 +193,8 @@ public class PacketReaderController {
         FieldResponseDto resultField = new FieldResponseDto(resultFields);
         ResponseWrapper<FieldResponseDto> response = getResponseWrapper();
         response.setResponse(resultField);
+        LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID,
+                "CUSTOM-LOG  Ending  Api /metaInfo for RID : ",request.getRequest().getId()+" TimeTaken : "+(System.currentTimeMillis()-starTime)+" ms");
         return response;
     }
 
@@ -178,6 +208,9 @@ public class PacketReaderController {
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
     public ResponseWrapper<List<FieldResponseDto>> getAudits(@RequestBody(required = true) RequestWrapper<InfoDto> request) {
+    	long starTime=System.currentTimeMillis();
+    	LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID,
+                "CUSTOM-LOG  Starting Api /audits for RID : ",request.getRequest().getId());
         InfoDto metaDto = request.getRequest();
         SourceProcessDto sourceProcessDto = packetReaderService.getSourceAndProcess(metaDto.getId(), metaDto.getSource(), metaDto.getProcess());
         List<Map<String, String>> resultFields = packetReader.getAudits(metaDto.getId(),
@@ -191,6 +224,8 @@ public class PacketReaderController {
         }
         ResponseWrapper<List<FieldResponseDto>> response = getResponseWrapper();
         response.setResponse(resultField);
+        LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID,
+                "CUSTOM-LOG  Ending  Api /audits for RID : ",request.getRequest().getId()+" TimeTaken : "+(System.currentTimeMillis()-starTime)+" ms");
         return response;
     }
 
@@ -204,11 +239,16 @@ public class PacketReaderController {
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
     public ResponseWrapper<ValidatePacketResponse> validatePacket(@RequestBody(required = true) RequestWrapper<InfoDto> request) {
+    	long starTime=System.currentTimeMillis();
+    	LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID,
+                "CUSTOM-LOG  Starting Api /validatePacket for RID : ",request.getRequest().getId());
         InfoDto metaDto = request.getRequest();
         SourceProcessDto sourceProcessDto = packetReaderService.getSourceAndProcess(metaDto.getId(), metaDto.getSource(), metaDto.getProcess());
         boolean resultFields = packetReader.validatePacket(metaDto.getId(), sourceProcessDto.getSource(), sourceProcessDto.getProcess());
         ResponseWrapper<ValidatePacketResponse> response = getResponseWrapper();
         response.setResponse(new ValidatePacketResponse(resultFields));
+        LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID,
+                "CUSTOM-LOG  Ending  Api /validatePacket for RID : ",request.getRequest().getId()+" TimeTaken : "+(System.currentTimeMillis()-starTime)+" ms");
         return response;
     }
 
@@ -223,10 +263,14 @@ public class PacketReaderController {
             @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseWrapper<TagResponseDto> getTags(
 			@RequestBody(required = true) RequestWrapper<TagRequestDto> request) {
-
+    	long starTime=System.currentTimeMillis();
+    	LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID,
+                "CUSTOM-LOG  Starting Api /getTags for RID : ",request.getRequest().getId());
 		TagResponseDto tagResponseDto = packetReaderService.getTags(request.getRequest());
 		ResponseWrapper<TagResponseDto> response = getResponseWrapper();
 		response.setResponse(tagResponseDto);
+		 LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID,
+	                "CUSTOM-LOG  Ending  Api /getTags for RID : ",request.getRequest().getId()+" TimeTaken : "+(System.currentTimeMillis()-starTime)+" ms");
 		return response;
 	}
 
@@ -240,12 +284,17 @@ public class PacketReaderController {
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
     public ResponseWrapper<InfoResponseDto> info(@RequestBody(required = true) RequestWrapper<InfoRequestDto> request) {
+    	long starTime=System.currentTimeMillis();
+    	LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID,
+                "CUSTOM-LOG  Starting Api /info for RID : ",request.getRequest().getId());
         String id = request.getRequest().getId();
         InfoResponseDto resultFields = null;
         if (id != null && !id.isEmpty())
             resultFields = packetReaderService.info(id);
         ResponseWrapper<InfoResponseDto> response = getResponseWrapper();
         response.setResponse(resultFields);
+        LOGGER.info(PacketManagerLogger.SESSIONID, PacketManagerLogger.REGISTRATIONID,
+                "CUSTOM-LOG  Ending  Api /info for RID : ",request.getRequest().getId()+" TimeTaken : "+(System.currentTimeMillis()-starTime)+" ms");
         return response;
     }
 
