@@ -6,7 +6,7 @@ import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-
+import com.fasterxml.jackson.databind.DeserializationFeature;
 @Configuration
 public class PacketServiceConfig {
 
@@ -14,6 +14,7 @@ public class PacketServiceConfig {
     @Primary
     public ObjectMapper getObjectMapper() {
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new AfterburnerModule()).registerModule(new JavaTimeModule());
+        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         return objectMapper;
     }
 }
